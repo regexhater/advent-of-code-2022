@@ -15,7 +15,8 @@ func main() {
 	}
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
-	var totalScore int
+	var totalScoreForPart1 int
+	var totalScoreForPart2 int
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -24,12 +25,14 @@ func main() {
 			if len(letters) != 2 {
 				log.Fatalf("malformed input, expected two elements per line but got %v. Line: %v\n", len(letters), line)
 			}
-			oponentPlay := newPlay(letters[0])
-			yourPlay := newPlay(letters[1])
-			totalScore += roundResult(*oponentPlay, *yourPlay)
+			oponentPlay := newPlayWithCode(letters[0])
+			yourPlayForPart1 := newPlayWithCode(letters[1])
+			yourPlayForPart2 := newPlayWithSign(getRPSForResult(oponentPlay, letters[1]))
+			totalScoreForPart1 += roundResult(*oponentPlay, *yourPlayForPart1)
+			totalScoreForPart2 += roundResult(*oponentPlay, *yourPlayForPart2)
 		}
 	}
-	log.Printf("Total score: %v points\n", totalScore)
+	log.Printf("---Total score---\nPart 1: %v points\nPart 2: %v Points\n", totalScoreForPart1, totalScoreForPart2)
 }
 
 func roundResult(oponentPlay Play, yourPlay Play) int {
@@ -55,3 +58,27 @@ func roundResult(oponentPlay Play, yourPlay Play) int {
 	return points
 }
 
+func getRPSForResult(oponentPlay *Play, result string) rps {
+	var rpsForWantedResult rps
+	switch result {
+	//win
+	case "Z":
+		rpsForWantedResult = oponentPlay.Weakness
+	// draw
+	case "Y":
+		rpsForWantedResult = oponentPlay.Played
+	// lose
+	case "X":
+		{
+			if oponentPlay.Played == Rock {
+				rpsForWantedResult = Scissors
+			} else if oponentPlay.Played == Paper {
+				rpsForWantedResult = Rock
+			} else {
+				rpsForWantedResult = Paper
+			}
+		}
+	}
+
+	return rpsForWantedResult
+}

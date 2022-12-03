@@ -3,9 +3,9 @@ package main
 import "testing"
 
 func Test_roundResult(t *testing.T) {
-	rock := newPlay("A")
-	paper := newPlay("B")
-	scissors := newPlay("C")
+	rock := newPlayWithCode("A")
+	paper := newPlayWithCode("B")
+	scissors := newPlayWithCode("C")
 	type args struct {
 		oponentPlay Play
 		yourPlay    Play
